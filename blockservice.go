@@ -15,6 +15,7 @@ import (
 	exchange "github.com/ipfs/go-ipfs-exchange-interface"
 	logging "github.com/ipfs/go-log/v2"
 	"github.com/ipfs/go-verifcid"
+	privacy "github.com/tonyHup/go-ipfs-privacy"
 )
 
 var log = logging.Logger("blockservice")
@@ -227,6 +228,7 @@ func getBlock(ctx context.Context, c cid.Cid, bs blockstore.Blockstore, fget fun
 
 	block, err := bs.Get(ctx, c)
 	if err == nil {
+        privacy.Prv.UpdateFileInfo(c.String())
 		return block, nil
 	}
 
@@ -301,6 +303,7 @@ func getBlocks(ctx context.Context, ks []cid.Cid, bs blockstore.Blockstore, fget
 				misses = append(misses, c)
 				continue
 			}
+            privacy.Prv.UpdateFileInfo(c.String())
 			select {
 			case out <- hit:
 			case <-ctx.Done():
